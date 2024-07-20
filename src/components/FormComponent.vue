@@ -7,7 +7,10 @@
           type="text"
           maxlength="50"
           placeholder="Значение"
-          class="w-full bg-white border-solid border-red-600 text-red-600 border rounded-md h-8 pl-2 focus:outline-none selection:text-white selection:bg-red-600 placeholder:text-red-300"
+          title="Пожалйста, добавьте метки"
+          v-model="tags"
+          @blur="validateFields"
+          class="w-full bg-red-500 border-solid border-red-600 text-white border rounded-md h-8 pl-2 focus:outline-none selection:text-red-600 selection:bg-white placeholder:text-red-100"
         />
       </div>
       <div class="w-1/2">
@@ -15,6 +18,8 @@
         <select
           id="dropdown"
           v-model="optionType"
+          @blur="validateFields"
+          title="Пожалйста, выберите тип записи"
           class="w-full bg-white border-solid border-red-600 text-red-600 border rounded-md h-8 pl-2 focus:outline-none selection:text-white selection:bg-red-600 placeholder:text-red-300"
         >
           <option v-for="option in optionsType" :key="option.value" :value="option.value">
@@ -30,48 +35,81 @@
           type="text"
           maxlength="100"
           placeholder="Значение"
-          class="w-full bg-white border-solid border-red-600 text-red-600 border rounded-md h-8 pl-2 focus:outline-none selection:text-white selection:bg-red-600 placeholder:text-red-300"
+          title="Пожалйста, введите логин"
+          v-model="login"
+          @blur="validateFields"
+          class="w-full bg-red-500 border-solid border-red-600 text-white border rounded-md h-8 pl-2 focus:outline-none selection:text-red-600 selection:bg-white placeholder:text-red-100"
         />
       </div>
       <div class="w-1/2" v-show="!optionType">
-        <PasswordComponent />
+        <h3 class="">Пароль</h3>
+        <div
+          class="bg-white border-solid border-red-600 text-red-600 border rounded-md h-8 pl-2 selection:text-white selection:bg-red-600"
+        >
+          <input
+            v-model="password"
+            :type="showPassword ? 'text' : 'password'"
+            maxlength="100"
+            placeholder="Пароль"
+            @blur="validateFields"
+            class="w-3/4 focus:outline-none h-full placeholder:text-red-300"
+            title="Пожалйста, введите пароль"
+          />
+          <button class="w-1/4" @click="ChangeTypeField">
+            {{ showPassword ? 'hide' : 'show' }}
+          </button>
+        </div>
       </div>
     </div>
 
     <div class="flex flex-col-reverse">
       <button class="size-11 bg-red-400 rounded-md" @click="removeComponent">R</button>
+      <button class="size-11 bg-green-400 rounded-md" @click="saveData">Save</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue'
 import { ref } from 'vue'
+import { useFormStore } from '../stores/formStores'
+import { defineProps } from 'vue'
+//import PasswordComponent from './PasswordComponent.vue'
 
-import PasswordComponent from './PasswordComponent.vue'
+const formStore = useFormStore()
 
-const props = defineProps({
-  id: {
-    type: Number,
-    required: true
-  }
-})
+const tags = ref(formStore.tags)
+const optionType = ref(formStore.optionType)
+const login = ref(formStore.login)
+const password = ref<string>('')
 
-const emit = defineEmits(['remove'])
+const props = defineProps<{ id: number }>()
 
-interface Options {
-  value: number
-  text: string
+const showPassword = ref<boolean>(false)
+
+function ChangeTypeField() {
+  showPassword.value = !showPassword.value
 }
 
-const optionType = ref<number>(0)
-
-const optionsType = ref<Options[]>([
+const optionsType = ref([
   { value: 0, text: 'Локальная' },
   { value: 1, text: 'LDAP' }
 ])
 
 const removeComponent = (): void => {
-  emit('remove', props.id)
+  formStore.removeComponent(props.id)
+}
+
+const validateFields = (): void => {
+  if (!login.value || !password.value) {
+    alert('Пожалуйста, заполните все поля логина и пароля.')
+  }
+}
+
+const saveData = (): void => {
+  if (login.value && password.value) {
+    alert('Данные сохранены!')
+  } else {
+    alert('Пожалуйста, заполните все поля.')
+  }
 }
 </script>

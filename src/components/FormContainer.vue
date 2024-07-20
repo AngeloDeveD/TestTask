@@ -7,18 +7,15 @@
       </button>
     </div>
     <div class="py-2 my-3 bg-red-400 text-white rounded-md w-full">
-      <h2 class="text-sm px-6">
+      <h2 class="text-sm px-6 font-bold">
         Для указания нескольких меток для одной пары логин/пароль используйте разделитель ;
       </h2>
     </div>
     <div class="max-h-80 overflow-y-auto">
-      <div
-        v-if="components.length > 0"
-        v-for="component in components"
-        :key="component.id"
-        class=""
-      >
-        <FormComponent :id="component.id" @remove="removeComponent" />
+      <div v-if="components.length > 0">
+        <div v-for="component in components" :key="component.id" class="">
+          <FormComponent :id="component.id" @remove="removeComponent" />
+        </div>
       </div>
       <div v-else>
         <h2 class="">Пожалуйста добавьте учётную запись</h2>

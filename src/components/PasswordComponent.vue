@@ -7,7 +7,8 @@
       :type="showPassword ? 'text' : 'password'"
       maxlength="100"
       placeholder="Пароль"
-      class="w-3/4 focus:outline-none h-full"
+      class="w-3/4 focus:outline-none h-full placeholder:text-red-300"
+      title="Пожалйста, введите пароль"
     />
     <button class="w-1/4" @click="ChangeTypeField">{{ showPassword ? 'hide' : 'show' }}</button>
   </div>
